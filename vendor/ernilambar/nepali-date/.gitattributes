@@ -1,0 +1,10 @@
+/docs export-ignore
+/tests export-ignore
+/build-cs export-ignore
+/build-phpunit export-ignore
+/.gitattributes export-ignore
+/.editorconfig export-ignore
+/.gitignore export-ignore
+/phpunit.xml.dist export-ignore
+/phpcs.xml.dist export-ignore
+/index.php export-ignore

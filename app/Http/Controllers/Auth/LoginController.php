@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Models\History;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\UtilityFunctions;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+
+class LoginController extends Controller
+{
+    
+
+    use AuthenticatesUsers;
+
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = RouteServiceProvider::HOME;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     *
+     */
+
+     protected function authenticated($request, $user)
+     {
+         // Log the login event
+         History::create([
+             'description' => 'Logged in',
+             'user_id' => $user->id,
+             'type' => 0,
+             'ip_address' => UtilityFunctions::getuserIP()
+         ]);
+     
+        // Redirect based on role
+    if ($user->isAdmin()) {
+        return redirect('/admin'); // Redirect to admin panel for admins
+    } elseif ($user->isSuperAdmin()) {
+        return redirect('/admin'); // Redirect to super admin panel if applicable
+    } else {
+        return redirect('/'); // Redirect to frontend view for regular users
+    }
+}
+     
+
+    public function logout()
+    {
+        History::create([
+            'description' => 'Logged out',
+            'user_id' => Auth::user()->id,
+            'type' => 0,
+            'ip_address' => UtilityFunctions::getuserIP()
+        ]);
+        Auth::logout();
+        return redirect('/');
+    }
+
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+}
